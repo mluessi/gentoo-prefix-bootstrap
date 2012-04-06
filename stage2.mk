@@ -87,7 +87,7 @@ install/stage2-gcc: install/stage2-binutils
 	${EMERGE} --oneshot --nodeps sys-kernel/linux-headers
 	${EMERGE} --oneshot -j sys-devel/bison
 	${EMERGE} --oneshot --nodeps "=sys-devel/gcc-4.2*"
-	echo ">sys-devel/gcc-4.2" > ${EPREFIX}/etc/portage/package.mask/gcc
+	echo ">=sys-devel/gcc-4.3" > ${EPREFIX}/etc/portage/package.mask/gcc
 	touch $@
 
 install/stage2-up-to-pax-utils: install/stage2-gcc
@@ -112,12 +112,13 @@ install/stage2-portage-workarounds: install/stage2-up-to-pax-utils
 	echo "export LDFLAGS='-L/usr/lib64'" > ${EPREFIX}/etc/portage/env/dev-lang/python
 	# --
 	${EMERGE} --oneshot -j sys-libs/readline
-	${EMERGE} --oneshot --nodeps dev-lang/python-updater
+	${EMERGE} --oneshot --nodeps app-admin/python-updater
 	${EMERGE} --nodeps dev-lang/python
+	${EMERGE} --nodeps app-admin/eselect-python
+	eselect python set python2.7
 	touch $@
 
 install/stage2-portage: install/stage2-up-to-pax-utils install/stage2-portage-workarounds
-	# -- Update portage
 	env FEATURES="-collision-protect" ${EMERGE} --oneshot sys-apps/portage
 	# -- Move tmp directory
 	mv -f ${EPREFIX}/tmp ${EPREFIX}/tmp.old
